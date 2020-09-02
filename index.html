@@ -1,0 +1,51 @@
+<!-- HTML CODE -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird</title>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap" rel="stylesheet"> -->
+    <style>
+        body
+        {
+            margin:0;
+        }
+         canvas
+        {
+            border :1px solid #000;
+            /* display: block;
+            margin: 0 auto; */
+        } 
+        #fire1
+        {
+            background-image: url("img/fire1.gif");
+            left:300px;
+        }
+        #fire2
+        {
+            background-image: url("img/fire2.gif");
+            left:900px;
+        }
+        .fire
+        {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            top:200px;
+            background-position: center center;
+            background-size: cover;
+            display: none;
+
+
+        }
+    </style>
+</head>
+<body>
+    <div class="fire" id="fire1"></div>
+    <div class="fire" id="fire2"></div>
+    <canvas height="715" width="1520" id="canvas">
+    </canvas>
+    <script src="game.js"></script>
+</body>
+</html>
