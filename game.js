@@ -73,6 +73,59 @@ cvs.addEventListener("click", function(event)
             break;
     }
 })
+
+document.addEventListener("keydown", function(event)
+{
+
+    switch(state.current)
+    {
+        case state.game:
+            if(event,keyCode==32)
+            {
+            bird2.move();
+            flap.play();
+            }
+            break;  
+            
+    }
+}   
+)
+
+const player1=
+{
+    value:0,
+    y:30,
+    draw:function()
+    {
+        ctx.fillStyle="#000000";
+        ctx.font="22px impact";
+        let a="Player 1=";
+        if(state.current==state.game)
+        {
+        ctx.fillText(this.value, 110, this.y);
+        ctx.fillText(a, 20, this.y);
+        }
+    }
+}
+
+
+const player2=
+{
+    value:0,
+    y:60,
+    draw:function()
+    {
+        ctx.fillStyle="#000000";
+        ctx.font="22px impact";
+        let a="Player 2=";
+        if(state.current==state.game)
+        {
+        ctx.fillText(this.value,110,this.y);
+        ctx.fillText(a,20,this.y);
+        }
+    }
+}
+
 //startbtn object
 const startbtn=
 {
@@ -227,6 +280,7 @@ const bird=
         if(state.current==state.getReady)
         {
             this.y=150;
+            this.jump=4.6;
         }
         else
         {
@@ -237,9 +291,10 @@ const bird=
         {
             this.speed=0; 
             this.frame=0;
+            this.jump=0;
             if(state.current==state.game)
             {
-                state.current=state.gameOver;
+                // state.current=state.gameOver;
                 die.play();
             }
         }
@@ -253,6 +308,79 @@ const bird=
 
 }
 
+const bird2=
+{
+    animation:
+    [
+        {sX:276,sY:112},
+        {sX:276, sY:139},
+        {sX:276, sY:164},
+        {sX:276, sY:139}  // repeating second Bird!
+    ],
+    x:200,
+    y:150,
+    w:34,
+    h:26,
+    frame:0,
+    period:5, // higher the value of period slower the flapping of the Bird!
+    speed:0,
+    gravity:0.20,
+    jump:4.6,
+    radius:13,
+    draw:function()
+    {
+       let bird= this.animation[this.frame];
+       ctx.drawImage(sprite,bird.sX,bird.sY,this.w,this.h,this.x-this.w/2,this.y-this.h/2,this.w,this.h);
+    },
+    update:function()
+    {
+        this.period=state.current==state.getReady?10:5;
+        // for flapping the bird ,for every 5 frames the value of frame will inc by 1 !
+        this.frame+=frames%this.period==0 ? 1:0;
+        // reset the frame
+        this.frame=this.frame%this.animation.length;
+        // Gravity
+        if(state.current==state.getReady)
+        {
+            this.y=150;
+            this.jump=4.6;
+        }
+        else
+        {
+            this.y+=this.speed;
+            this.speed+=this.gravity; 
+        }
+        if(this.y+this.h/2 >=cvs.height-ground.h && bird.y+bird.h/2 >=cvs.height-ground.h )
+        {
+            this.speed=0; 
+            this.frame=0;
+            this.jump=0;
+
+            if(state.current==state.game)
+            {
+                state.current=state.gameOver;
+                // state.current=state.gameOver;
+                die.play();
+            }
+        }
+        else if(this.y+this.h/2 >=cvs.height-ground.h )
+        {
+            this.speed=0; 
+            this.frame=0;
+            this.jump=0;
+
+        }
+    },
+    move:function()
+    {
+        this.speed=-this.jump;//flapping bird up
+       
+    }
+
+}
+
+
+//player 1 &player 2 score
 //for pipes
 const pipes=
 {
@@ -322,20 +450,45 @@ const pipes=
                 score.best=Math.max(score.value,score.best);
                 localStorage.setItem("best",score.best);
             }
+
+            //player 1 and player 2 score
+            if(bird.x+bird.radius > p.x && bird.x-bird.radius < p.x+this.w && bird.y+bird.radius<p.y+this.h+this.gap && bird.y-bird.radius > p.y+this.h)
+
+            {
+                player1.value= player1.value+1;
+            }
+            if(bird2.x+bird2.radius > p.x && bird2.x-bird2.radius < p.x+this.w && bird2.y+bird2.radius<p.y+this.h+this.gap && bird2.y-bird2.radius > p.y+this.h)
+
+            {
+                player2.value= player2.value+1;
+            }
             //collison detection with pipes(top pipe)
             if(bird.x+bird.radius>p.x && bird.x-bird.radius<p.x+this.w && bird.y+bird.radius >p.y && bird.y-bird.radius<p.y+this.h)   
-            {
+            {   bird.y=900;
                 hit.play();
-                state.current=state.gameOver;
+                // state.current=state.gameOver;
             }
+            else if(bird2.x+bird2.radius>p.x && bird2.x-bird2.radius<p.x+this.w && bird2.y+bird2.radius >p.y && bird2.y-bird2.radius<p.y+this.h)   
+                {   bird2.y=900;
+                    hit.play();
+                    // state.current=state.gameOver;
+                }
+
             // collision detection with pipes(bottom pipes)
             let tobp=p.y+this.h+this.gap;
             let bobp=p.y+this.h+this.gap+this.h;
             if(bird.x+bird.radius>p.x && bird.x-bird.radius < p.x+this.w && bird.y+bird.radius>tobp && bird.y-bird.radius<bobp)
-            {
+            {   
+                bird.y=900;
                 hit.play();
-                state.current=state.gameOver;
-            }
+            //     state.current=state.gameOver;
+             }
+            else if(bird2.x+bird2.radius>p.x && bird2.x-bird2.radius < p.x+this.w && bird2.y+bird2.radius>tobp && bird2.y-bird2.radius<bobp)
+             {   
+                 bird2.y=900;
+                 hit.play();
+             //     state.current=state.gameOver;
+              }
         }
 
     },
@@ -404,54 +557,62 @@ const ball=
 }
 
 //score object
-const score=
-{
-    best:parseInt(localStorage.getItem("best"))|| 0,
-    value:0,
-    draw:function()
-    {
-        ctx.fillStyle="#000000";
-        if(state.current == state.game)
-        {
-        ctx.font="50px teko";
-        ctx.fillText(this.value,cvs.width/2,100);
-        }
-        else if(state.current==state.gameOver)
-        {
-            ctx.font="30px teko";
-            ctx.fillText(this.value,cvs.width/2+65,300);
+// const score=
+// {
+//     best:parseInt(localStorage.getItem("best"))|| 0,
+//     value:0,
+//     draw:function()
+//     {
+//         ctx.fillStyle="#000000";
+//         if(state.current == state.game)
+//         {
+//         ctx.font="50px teko";
+//         ctx.fillText(this.value,cvs.width/2,100);
+//         }
+//         else if(state.current==state.gameOver)
+//         {
+//             ctx.font="30px teko";
+//             ctx.fillText(this.value,cvs.width/2+65,300);
 
-            ctx.font="30px teko";
-            ctx.fillText(this.best,cvs.width/2+65,340);
-        }
-    },
-    reset:function()
-    {
-        this.value=0;
-    }
-}
+//             ctx.font="30px teko";
+//             ctx.fillText(this.best,cvs.width/2+65,340);
+//         }
+//     },
+//     reset:function()
+//     {
+//         this.value=0;
+//     }
+// }
 
 
 
 //for drawing
 function draw()
 {
-    ctx.fillStyle="#70c5ce";
+//  Let color = ctx.createLinearGradient(0,0,cvs.width,cvs.height);
+//     color.addColorStop(0,"deepskyblue");
+//     color.addColorStop(0.5,"deepskyblue");
+//     color.addColorStop(1,"#008fb3");
+    ctx.fillStyle="#008fb3";
     ctx.fillRect(0,0,cvs.clientWidth,cvs.height);
     cloud.draw();
     pipes.draw();
     ball.draw();
     ground.draw();
     bird.draw();
+    bird2.draw();
     getReady.draw();
     gameOver.draw();
-    score.draw();
+    // score.draw();
+    player1.draw();
+    player2.draw();
 
 }
 function update()
 {
     ground.update();
     bird.update();
+    bird2.update();
     pipes.update();
     ball.update();
 }
