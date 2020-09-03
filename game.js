@@ -590,7 +590,7 @@ function draw()
     let color = ctx.createLinearGradient(0,0,cvs.width,cvs.height);
     color.addColorStop(0,"cyan");//0%
     color.addColorStop(0.5,"deepskyblue");//50%
-    color.addColorStop(1,"deepskyblue");//100%
+    color.addColorStop(1,"cyan");//100%
     ctx.fillStyle=color;
     ctx.fillRect(0,0,cvs.clientWidth,cvs.height);
     cloud.draw();
