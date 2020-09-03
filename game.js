@@ -68,7 +68,7 @@ cvs.addEventListener("click", function(event)
                 state.current=state.getReady;
                 pipes.reset();
                 ball.reset();
-                score.reset();
+                //score.reset();
             }
             break;
     }
@@ -80,10 +80,10 @@ document.addEventListener("keydown", function(event)
     switch(state.current)
     {
         case state.game:
-            if(event,keyCode==32)
+            if(event.keyCode==32)
             {
-            bird2.move();
-            flap.play();
+                bird2.move();
+                flap.play();
             }
             break;  
             
@@ -102,8 +102,8 @@ const player1=
         let a="Player 1=";
         if(state.current==state.game)
         {
-        ctx.fillText(this.value, 110, this.y);
-        ctx.fillText(a, 20, this.y);
+            ctx.fillText(this.value, 110, this.y);
+            ctx.fillText(a, 20, this.y);
         }
     }
 }
@@ -380,7 +380,7 @@ const bird2=
 }
 
 
-//player 1 &player 2 score
+
 //for pipes
 const pipes=
 {
@@ -443,12 +443,12 @@ const pipes=
             if(p.x+this.w <=0)
             {
                 this.position.shift();
-                point.play();
+                // point.play();
 
                 // score increment
-                score.value+=1;
-                score.best=Math.max(score.value,score.best);
-                localStorage.setItem("best",score.best);
+                // score.value+=1;
+                // score.best=Math.max(score.value,score.best);
+                // localStorage.setItem("best",score.best);
             }
 
             //player 1 and player 2 score
@@ -543,6 +543,11 @@ const ball=
             }
             // colision detection ball
             if(bird.x+bird.radius>p.x && bird.x-bird.radius<p.x+this.w && bird.y+bird.radius>p.y&&bird.y-bird.radius<p.y+this.h)
+            {
+                hit.play();
+                state.current=state.gameOver;
+            }
+            if(bird2.x+bird2.radius>p.x && bird2.x-bird2.radius<p.x+this.w && bird2.y+bird2.radius>p.y&&bird2.y-bird2.radius<p.y+this.h)
             {
                 hit.play();
                 state.current=state.gameOver;
