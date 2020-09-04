@@ -15,7 +15,7 @@ let sprite=new Image(); //image object creation
 sprite.src="img/sprite.png";
 
 let cricket=new Image();
-cricket.src="img/cricket.png";
+cricket.src="img/virus.png";
 let gameover = new Image();
 gameover.src="img/gameover.png";
 
@@ -441,7 +441,7 @@ const pipes=
     },
     w:53,
     h:400,
-    gap:120,
+    gap:150,
     maxYpos:-150,
     dx:6,
 
@@ -551,11 +551,11 @@ const pipes=
 const ball=
 {
     ball_position:[],
-    w:30,
-    h:30,
+    w:50,
+    h:50,
     sX:0,
     sY:0,
-    dx:6,
+    dx:4,
     draw:function()
     {
         for(let i=0;i<this.ball_position.length;i++)
