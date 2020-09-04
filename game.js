@@ -555,7 +555,7 @@ const ball=
     h:30,
     sX:0,
     sY:0,
-    dx:4,
+    dx:6,
     draw:function()
     {
         for(let i=0;i<this.ball_position.length;i++)
