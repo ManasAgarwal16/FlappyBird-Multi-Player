@@ -2,6 +2,11 @@ let cvs= document.getElementById("canvas");
 let ctx=cvs.getContext("2d");
 let fire1=document.getElementById("fire1");
 let fire2=document.getElementById("fire2");
+let ending1=document.getElementById("ending1");
+
+//background Setting!
+// cvs.style.backgroundColor="skyblue";
+
 // variable declaration!
 let frames=0;
 
@@ -11,16 +16,15 @@ sprite.src="img/sprite.png";
 
 let cricket=new Image();
 cricket.src="img/cricket.png";
-
-let gameover=new Image();
+let gameover = new Image();
 gameover.src="img/gameover.png";
 
 //load sound
 let flap=new Audio();
 flap.src="audio/flap.wav";
 
- // let point=new Audio();
-// point.src="audio/point.wav";
+let point=new Audio();
+point.src="audio/point.wav";
 
 let hit=new Audio();
 hit.src="audio/hit.wav";
@@ -52,6 +56,8 @@ cvs.addEventListener("click", function(event)
             break;
         case state.game:
             bird.move();
+            // if(bird.y - bird.radius <= 0) return;
+            // bird.flap();
             flap.play();
             break;
         case state.gameOver:
@@ -64,30 +70,33 @@ cvs.addEventListener("click", function(event)
             {
                 state.current=state.getReady;
                 pipes.reset();
+                ball.reset();
                 player1.reset();
                 player2.reset();
-                ball.reset();
+
+                //score.reset();
             }
             break;
     }
 })
 
-document.addEventListener("keydown",function(event)
+document.addEventListener("keydown", function(event)
 {
-   // console.log(event);
 
     switch(state.current)
     {
         case state.game:
-        if(event.keyCode==32)
-        {
-        bird2.move();
-        flap.play();
-        }
-        break;             
+            if(event.keyCode==32)
+            {
+                bird2.move();
+                flap.play();
+            }
+            break;  
+            
     }
-})
-// player 1 object
+}   
+)
+
 const player1=
 {
     value:0,
@@ -96,14 +105,14 @@ const player1=
     {
         ctx.fillStyle="#000000";
         ctx.font="22px impact";
-        let a="Player 1 =";
+        let a="Player 1=";
         if(state.current==state.game)
         {
-        ctx.fillText(this.value, 110, this.y);
-        ctx.fillText(a, 20, this.y);
+            ctx.fillText(this.value, 110, this.y);
+            ctx.fillText(a, 20, this.y);
         }
     },
-    reset :function()
+    reset:function()
     {
         this.value=0;
     }
@@ -125,7 +134,7 @@ const player2=
         ctx.fillText(a,20,this.y);
         }
     },
-    reset :function()
+    reset:function()
     {
         this.value=0;
     }
@@ -157,6 +166,7 @@ const getReady=
         ctx.drawImage(sprite,this.sX,this.sY,this.w,this.h,this.x,this.y,this.w,this.h);
         fire1.style.display="none";
         fire2.style.display="none";
+        ending1.style.display="none";
         }
     }
 }
@@ -176,6 +186,7 @@ const gameOver=
         ctx.drawImage(gameover,this.sX,this.sY,624,552,this.x,this.y,this.w,this.h);
         fire1.style.display="block";
         fire2.style.display="block";
+        ending1.style.display="block";
         }
     },
     update:function()
@@ -186,17 +197,17 @@ const gameOver=
             ctx.font="25px impact";
             if(player1.value>player2.value)
             {
-                let a= "PLAYER 1 WON";
+                let a = "Player 1 won";
                 ctx.fillText(a,cvs.width/2-68,305);
             }
+
             else if(player1.value < player2.value)
             {
-                let b= "PLAYER 2 WON";
-                ctx.fillText(b,cvs.width/2-68,305);   
+                let b= "Player 2 won";
+                ctx.fillText(b,cvs.width/2-68,305);
             }
-            else
-            {
-                let c= "DRAW";
+            else{
+                let c= "Draw";
                 ctx.font="40px impact";
                 ctx.fillText(c,cvs.width/2-45,315);
             }
@@ -239,7 +250,7 @@ let ground=
     h:112,
     x:0,
     y:cvs.height-112,
-    dx:3,
+    dx:6,
     draw: function()
     {
         ctx.drawImage(sprite, this.sX,this.sY,this.w,this.h,this.x,this.y,this.w,this.h);
@@ -273,7 +284,7 @@ let ground=
         } 
     }
 }
-// Bird1 Object
+// Bird Object
 const bird=
 {
     animation:
@@ -317,12 +328,17 @@ const bird=
             this.y+=this.speed;
             this.speed+=this.gravity; 
         }
-        if(this.y+this.h/2 >=cvs.height-ground.h) //touched the ground
+        if(this.y+this.h/2 >=cvs.height-ground.h)
         {
             this.speed=0; 
             this.frame=0;
-            this.jump=0;//after touching ground bird cant revive
+            this.jump=0;
             this.out=true;
+            // if(state.current==state.game)
+            // {
+            //     // state.current=state.gameOver;
+            //     die.play();
+            // }
         }
 
     },
@@ -333,7 +349,7 @@ const bird=
     }
 
 }
-//Bird 2 object !
+
 const bird2=
 {
     animation:
@@ -353,6 +369,7 @@ const bird2=
     gravity:0.20,
     jump:4.6,
     radius:13,
+    out:false,
     draw:function()
     {
        let bird= this.animation[this.frame];
@@ -376,7 +393,7 @@ const bird2=
             this.y+=this.speed;
             this.speed+=this.gravity; 
         }
-        if(/*(bird 2)*/this.y+this.h/2 >=cvs.height-ground.h && bird.y+bird.h/2 >=cvs.height-ground.h )
+        if(this.y+this.h/2 >=cvs.height-ground.h && bird.y+bird.h/2 >=cvs.height-ground.h )
         {
             this.speed=0; 
             this.frame=0;
@@ -392,8 +409,10 @@ const bird2=
         else if(this.y+this.h/2 >=cvs.height-ground.h )
         {
             this.speed=0; 
-            this.frame=0;     //for bird 2
+            this.frame=0;
             this.jump=0;
+            this.out=true;
+
         }
     },
     move:function()
@@ -403,6 +422,8 @@ const bird2=
     }
 
 }
+
+
 
 //for pipes
 const pipes=
@@ -420,9 +441,9 @@ const pipes=
     },
     w:53,
     h:400,
-    gap:150,
+    gap:120,
     maxYpos:-150,
-    dx:5,
+    dx:6,
 
     draw :function()
     {
@@ -466,17 +487,20 @@ const pipes=
             if(p.x+this.w <=0)
             {
                 this.position.shift();
-                
+                // point.play();
+
+                // score increment
+                // score.value+=1;
+                // score.best=Math.max(score.value,score.best);
+                // localStorage.setItem("best",score.best);
             }
 
-            //player 1 and player 2 scores
-            //player 1
+            //player 1 and player 2 score
             if(bird.x+bird.radius > p.x && bird.x-bird.radius < p.x+this.w && bird.y+bird.radius<p.y+this.h+this.gap && bird.y-bird.radius > p.y+this.h)
 
             {
                 player1.value= player1.value+1;
             }
-            // player 2
             if(bird2.x+bird2.radius > p.x && bird2.x-bird2.radius < p.x+this.w && bird2.y+bird2.radius<p.y+this.h+this.gap && bird2.y-bird2.radius > p.y+this.h)
 
             {
@@ -502,14 +526,17 @@ const pipes=
                 bird.y=900;
                 if(bird.out==false)
                 {
-                    hit.play();
+                hit.play();
                 }
             //     state.current=state.gameOver;
              }
             else if(bird2.x+bird2.radius>p.x && bird2.x-bird2.radius < p.x+this.w && bird2.y+bird2.radius>tobp && bird2.y-bird2.radius<bobp)
              {   
                  bird2.y=900;
-                 hit.play();
+                 if(bird2.out==false)
+                {
+                hit.play();
+                }
              //     state.current=state.gameOver;
               }
         }
@@ -520,7 +547,7 @@ const pipes=
         this.position=[];
     }
 }
-//ball object
+// ball object
 const ball=
 {
     ball_position:[],
@@ -555,6 +582,14 @@ const ball=
             );
             
         }
+        this.x=this.x-this.dx;
+        {
+            if(this.x%112==0)
+            {
+                this.x=0;
+            }
+        }
+
         for(let i=0;i<this.ball_position.length;i++)
         {
             let p=this.ball_position[i];
@@ -584,9 +619,14 @@ const ball=
     }
 }
 
+
+
+
 //for drawing
 function draw()
 {
+
+   
     let color = ctx.createLinearGradient(0,0,cvs.width,cvs.height);
     color.addColorStop(0,"cyan");//0%
     color.addColorStop(0.5,"deepskyblue");//50%
@@ -601,6 +641,7 @@ function draw()
     bird2.draw();
     getReady.draw();
     gameOver.draw();
+    // score.draw();
     player1.draw();
     player2.draw();
 
